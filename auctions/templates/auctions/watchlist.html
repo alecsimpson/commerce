@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+    {% for item in watchlist %}
+        <a href="{% url 'listing' item.listing.id %}">
+            <div class="listing">
+                <img src={{ item.listing.imageUrl }} alt="">
+                <div class="listing-details">
+                    <h3>{{ item.listing.title }}</h3>
+                    <p>{{ item.listing.description }}</p>
+                    <p>Price: {{ item.listing.startPrice }}</p>
+                </div>
+                <form action="{% url 'watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="remove" value="True">
+                    <input type="hidden" name="listing" value={{ item.listing.id }}>
+                    <button class="btn btn-danger" type="submit">Remove from Watchlist</button>
+                </form>
+            </div>
+        </a>
+    {% endfor %}
+
+    
+
+{% endblock %}

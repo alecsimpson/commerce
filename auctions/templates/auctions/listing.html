@@ -1,0 +1,54 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<img src={{ listing.imageUrl }} alt="">
+<h3>{{ listing.title }}</h3>
+<p>seller: {{ listing.user.username }}</p>
+<p>id: {{ listing.id }}</p>
+<p>active: {{ listing.active }}</p>
+<p>Starting Price: {{ listing.startPrice }}</p>
+
+{% if user.is_authenticated %}
+
+    {% if listing.active and user == listing.user %}
+    <form action="{% url 'listing' listing.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="active">
+        <input type="hidden" name="active" value='False'>
+        <button class="btn btn-danger" type="submit">Close auction</button>
+    </form>
+    {% endif %}
+
+    <form action="{% url 'watchlist' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="add" value="True">
+        <input type="hidden" name="listing" value={{ listing.id }}>
+        <button class="btn btn-primary" type="submit">Add to Watchlist</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form action="{% url 'listing' listing.id %}" method="post">
+        {% csrf_token %}
+        {{ bidForm }}
+        <input type="hidden" name="form" value="bid">
+        <input type="hidden" name="listing" value={{ listing.id }}>
+        <button class="btn btn-success" type="submit">Place Bid</button>
+    </form>
+{% endif %}
+
+{% for bid in bids%}
+    <div class="listing-bid">
+        <p>Bid Amount: {{ bid.amount }}</p>
+        <p>Bidder: {{ bid.user }}</p>
+    </div>
+{% endfor %}
+
+
+
+
+
+{% endblock %}
